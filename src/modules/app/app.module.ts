@@ -6,6 +6,8 @@ import { LoggerMiddleware } from '../../common/utils/logger';
 import { CustomConfigModule } from '../config/config.module';
 
 import { join } from 'path';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmConfig } from 'src/config/typeorm.config';
 
 @Module({
   imports: [
@@ -15,6 +17,7 @@ import { join } from 'path';
       ignoreEnvFile: false,
     }),
     CustomConfigModule,
+    TypeOrmModule.forRoot(TypeOrmConfig()),
     AppModule,
   ],
   controllers: [AppController],
