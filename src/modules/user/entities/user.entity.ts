@@ -4,7 +4,6 @@ import { UserAddressEntity } from "./address.entity";
 
 @Entity(EntityNames.User)
 export class UserEntity {
-    [x: string]: any;
     @PrimaryGeneratedColumn('increment')
     id:number;
     @Column({nullable: true})
