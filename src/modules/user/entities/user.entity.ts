@@ -1,8 +1,10 @@
 import { EntityNames } from "src/common/enums/entity-name.enum";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { UserAddressEntity } from "./address.entity";
 
 @Entity(EntityNames.User)
 export class UserEntity {
+    [x: string]: any;
     @PrimaryGeneratedColumn('increment')
     id:number;
     @Column({nullable: true})
@@ -23,4 +25,7 @@ export class UserEntity {
     created_at : Date
     @UpdateDateColumn({type: "time with time zone"})
     updated_at : Date
+    @OneToMany(() => UserAddressEntity, (address) => address.user)
+    addressList: UserAddressEntity[];
+
 }
