@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -29,22 +33,40 @@ export class CategoryService {
     if (isBoolean(show)) {
       show = toBoolean(show);
     }
-    console.log(slug, title, parentId, show, category);
+    let parent: CategoryEntity = null;
+    if (parentId && !isNaN(parentId)) {
+      parent = await this.findOneById(+parentId);
+    }
     await this.categoryRepository.insert({
       title,
       slug,
       show,
-      parentId,
+      parentId: parent?.id,
       image: Location,
     });
     return { message: 'Category created successfully' };
   }
-  findAll() {
-    return `This action returns all category`;
+  async findAll() {
+    const [categories, count] = await this.categoryRepository.findAndCount({
+      where: {},
+      relations: {
+        parent: true,
+      },
+      select: {
+        parent: {
+          title: true,
+        },
+      },
+    });
+    return { categories, count };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOneById(id: number) {
+    const category = await this.categoryRepository.findOneBy({ id });
+    if (!category) {
+      throw new NotFoundException(`Category with id ${id} not found`);
+    }
+    return category;
   }
   async findOneBySlug(slug: string) {
     return await this.categoryRepository.findOneBy({ slug });
