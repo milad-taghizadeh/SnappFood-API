@@ -4,10 +4,10 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from '../../common/utils/logger';
 import { CustomConfigModule } from '../config/config.module';
-
 import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfig } from 'src/config/typeorm.config';
+import { CategoryModule } from '../category/category.module';
 
 @Module({
   imports: [
@@ -19,6 +19,7 @@ import { TypeOrmConfig } from 'src/config/typeorm.config';
     CustomConfigModule,
     TypeOrmModule.forRoot(TypeOrmConfig()),
     AppModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

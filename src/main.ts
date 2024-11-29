@@ -12,11 +12,11 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const serverPort = configService.get('App.SERVER_PORT');
   const swaggerEP = configService.get('App.SWAGGER_ENDPOINT');
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }))
+  app.useGlobalPipes(new ValidationPipe());
   app.enableCors({
     credentials: true,
-    origin: "*"
-  })
+    origin: '*',
+  });
   await app.listen(serverPort, () => {
     console.log(`Application successfuly started on PORT: ${serverPort}`);
     console.log(`Watch API doc at http://localhost:${serverPort}/${swaggerEP}`);

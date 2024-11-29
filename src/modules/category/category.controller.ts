@@ -11,21 +11,24 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
+  Req,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiConsumes } from '@nestjs/swagger';
 import { UploadFileS3 } from 'src/common/interceptors/upload-file.interceptor';
+import { SwaggerConsumes } from 'src/common/enums/swagger.consumes.enum';
 
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  @ApiConsumes('multipart/form-data')
+  @ApiConsumes(SwaggerConsumes.MultipartData)
   @UseInterceptors(UploadFileS3('image'))
-  create(
+  async create(
+    @Body() createCategoryDto: CreateCategoryDto,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -33,13 +36,14 @@ export class CategoryController {
           new FileTypeValidator({ fileType: 'image/(png|jpeg|jpg|webp)' }),
         ],
       }),
-    ) image: Express.Multer.File,
-    @Body()
-    createCategoryDto: CreateCategoryDto,
+    )
+    image: Express.Multer.File,
+    @Req() req: Request,
   ) {
-    return {
-      image, createCategoryDto
-    };
+    console.log('req body : ', req.body);
+    console.log('dto : ', createCategoryDto);
+    console.log(image);
+    return await this.categoryService.create(createCategoryDto, image);
   }
 
   @Get()
