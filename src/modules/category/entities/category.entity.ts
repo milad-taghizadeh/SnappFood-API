@@ -18,7 +18,7 @@ export class CategoryEntity {
   title: string;
   @Column({ unique: true })
   slug: string;
-  @Column()
+  @Column({ unique: false })
   image: string;
   @Column({ default: true })
   show: boolean;
