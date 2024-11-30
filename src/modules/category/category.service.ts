@@ -10,6 +10,11 @@ import { CategoryEntity } from './entities/category.entity';
 import { Repository } from 'typeorm';
 import { S3Service } from '../s3/s3.service';
 import { toBoolean, isBoolean } from 'src/common/utils/function.utils';
+import {
+  paginationGenerator,
+  paginationSolver,
+} from 'src/common/utils/pagination.utils';
+import { PaginationDto } from 'src/dto/pagination.dto';
 
 @Injectable()
 export class CategoryService {
@@ -46,7 +51,11 @@ export class CategoryService {
     });
     return { message: 'Category created successfully' };
   }
-  async findAll() {
+  async findAll(paginationDto: PaginationDto) {
+    const { limit, page, skip } = paginationSolver(
+      paginationDto.page,
+      paginationDto.limit,
+    );
     const [categories, count] = await this.categoryRepository.findAndCount({
       where: {},
       relations: {
@@ -57,8 +66,13 @@ export class CategoryService {
           title: true,
         },
       },
+      take: limit,
+      skip,
+      order: {
+        id: 'DESC',
+      },
     });
-    return { categories, count };
+    return { pagination: paginationGenerator(count, page, limit), categories };
   }
 
   async findOneById(id: number) {

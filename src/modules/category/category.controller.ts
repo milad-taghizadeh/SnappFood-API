@@ -12,13 +12,16 @@ import {
   MaxFileSizeValidator,
   FileTypeValidator,
   Req,
+  Query,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { ApiConsumes } from '@nestjs/swagger';
+import { ApiConsumes, ApiQuery } from '@nestjs/swagger';
 import { UploadFileS3 } from 'src/common/interceptors/upload-file.interceptor';
 import { SwaggerConsumes } from 'src/common/enums/swagger.consumes.enum';
+import { Pagination } from 'src/common/decorators/pagination.decorator';
+import { PaginationDto } from 'src/dto/pagination.dto';
 
 @Controller('category')
 export class CategoryController {
@@ -47,8 +50,11 @@ export class CategoryController {
   }
 
   @Get()
-  findAll() {
-    return this.categoryService.findAll();
+  @Pagination()
+  findAll(
+    @Query() pagination: PaginationDto
+  ) {
+    return this.categoryService.findAll(pagination);
   }
 
 
